@@ -1,0 +1,17 @@
+{
+    "name": "SuperKart Forecasting",
+    "dockerFile": "Dockerfile",
+    "context": "..",
+    "appPort": [
+        7860
+    ],
+    "settings": {
+        "python.pythonPath": "/usr/local/bin/python"
+    },
+    "extensions": [
+        "ms-python.python",
+        "ms-toolsai.jupyter",
+        "ms-azuretools.vscode-docker"
+    ],
+    "postCreateCommand": "pip install -r backend/requirements.txt && pip install -r frontend/requirements.txt"
+}

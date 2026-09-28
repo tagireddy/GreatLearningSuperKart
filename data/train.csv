@@ -1,0 +1,13 @@
+# **Contents of /superkart-forecasting/superkart-forecasting/data/train.csv**
+
+Product_Id,Product_Weight,Product_Sugar_Content,Product_Allocated_Area,Product_Type,Product_MRP,Store_Id,Store_Establishment_Year,Store_Size,Store_Location_City_Type,Store_Type,Product_Store_Sales_Total
+FD1,12.66,Low Sugar,0.027,Non Perishables,117.08,S1,2005,Medium,Tier 2,Supermarket Type2,15000
+FD2,15.00,Regular,0.030,Non Perishables,150.00,S1,2005,Medium,Tier 2,Supermarket Type2,20000
+FD3,10.50,No Sugar,0.025,Non Perishables,80.00,S2,2010,High,Tier 1,Departmental Store,30000
+FD4,8.00,Low Sugar,0.020,Non Perishables,50.00,S2,2010,High,Tier 1,Departmental Store,25000
+FD5,5.00,Regular,0.015,Non Perishables,30.00,S3,2015,Low,Tier 3,Food Mart,10000
+FD6,20.00,No Sugar,0.035,Non Perishables,200.00,S3,2015,Low,Tier 3,Food Mart,5000
+FD7,7.50,Low Sugar,0.018,Non Perishables,45.00,S4,2018,Medium,Tier 2,Supermarket Type1,12000
+FD8,9.00,Regular,0.022,Non Perishables,60.00,S4,2018,Medium,Tier 2,Supermarket Type1,18000
+FD9,11.00,No Sugar,0.024,Non Perishables,75.00,S5,2020,High,Tier 1,Supermarket Type2,35000
+FD10,14.00,Low Sugar,0.028,Non Perishables,90.00,S5,2020,High,Tier 1,Supermarket Type2,40000
