@@ -1,6 +1,17 @@
 import streamlit as st
 import requests
 import pandas as pd
+import os
+
+BACKEND_URL = os.getenv("BACKEND_URL", "http://backend:5000").rstrip("/")
+
+
+def parse_error_message(response, fallback_message: str) -> str:
+    try:
+        payload = response.json() if response.content else {}
+    except ValueError:
+        payload = {}
+    return payload.get("error", fallback_message)
 
 # Set the title of the Streamlit app
 st.title("SuperKart Sales Forecasting")
@@ -37,15 +48,17 @@ if st.sidebar.button("Predict Sales"):
     }
     
     # Make a POST request to the backend API
-    model_url = "http://backend:5000/v1/predict"  # Update with the correct backend URL
-    response = requests.post(model_url, json=payload)
-    
-    # Display the prediction result
-    if response.status_code == 200:
-        prediction = response.json()
-        st.success(f"Predicted Sales: ${prediction['sales']:.2f}")
-    else:
-        st.error("Error in prediction. Please check your input values.")
+    model_url = f"{BACKEND_URL}/v1/predict"
+    try:
+        response = requests.post(model_url, json=payload, timeout=20)
+        if response.status_code == 200:
+            prediction = response.json()
+            st.success(f"Predicted Sales: ${prediction['sales']:.2f}")
+        else:
+            message = parse_error_message(response, "Prediction request failed")
+            st.error(f"Error in prediction: {message}")
+    except requests.RequestException as exc:
+        st.error(f"Backend connection failed: {exc}")
 
 # Option to upload a batch file for predictions
 st.sidebar.header("Batch Prediction")
@@ -55,12 +68,15 @@ if uploaded_file is not None:
     batch_data = pd.read_csv(uploaded_file)
     if st.sidebar.button("Predict Batch Sales"):
         batch_input = {'file': batch_data.to_csv(index=False).encode('utf-8')}
-        model_batch_url = "http://backend:5000/v1/predictbatch"  # Update with the correct backend URL
-        response = requests.post(model_batch_url, files=batch_input)
-        
-        if response.status_code == 200:
-            predictions = response.json()
-            st.success("Batch predictions received!")
-            st.write(predictions)
-        else:
-            st.error("Error in batch prediction. Please check the uploaded file.")
+        model_batch_url = f"{BACKEND_URL}/v1/predictbatch"
+        try:
+            response = requests.post(model_batch_url, files=batch_input, timeout=30)
+            if response.status_code == 200:
+                predictions = response.json()
+                st.success("Batch predictions received!")
+                st.write(predictions)
+            else:
+                message = parse_error_message(response, "Batch prediction request failed")
+                st.error(f"Error in batch prediction: {message}")
+        except requests.RequestException as exc:
+            st.error(f"Backend connection failed: {exc}")

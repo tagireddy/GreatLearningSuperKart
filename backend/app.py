@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 import joblib
-import numpy as np
 import pandas as pd
 from pathlib import Path
 
@@ -44,6 +43,22 @@ def prepare_features(df: pd.DataFrame) -> pd.DataFrame:
 
 model_path = Path('model/superkart_model.joblib')
 model = joblib.load(model_path)
+
+
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({
+        'status': 'ok',
+        'model_loaded': model is not None,
+    })
+
+
+@app.route('/model-info', methods=['GET'])
+def model_info():
+    return jsonify({
+        'model_path': str(model_path),
+        'expected_features': EXPECTED_FEATURES,
+    })
 
 @app.route('/v1/predict', methods=['POST'])
 def predict():

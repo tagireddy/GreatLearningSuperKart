@@ -1,80 +1,83 @@
-# SuperKart Sales Forecasting Project
+# SuperKart Sales Forecasting
 
 ## Overview
-The SuperKart Sales Forecasting project aims to develop a robust machine learning solution for predicting sales revenue across various retail outlets of SuperKart, a retail chain operating supermarkets and food marts. The project encompasses data preprocessing, model training, evaluation, and deployment using a Flask backend and a Streamlit frontend.
+This project predicts SuperKart store sales using a machine learning model exposed through a Flask API and consumed by a Streamlit frontend.
 
-## Project Structure
+## Repository Structure
 ```
-superkart-forecasting
-├── backend                # Backend application for serving predictions
-│   ├── app.py            # Main entry point for the Flask application
-│   ├── model             # Directory containing the serialized model
+GreatLearningSuperKart/
+├── backend/
+│   ├── app.py
+│   ├── train_model.py
+│   ├── requirements.txt
+│   ├── model/
 │   │   └── superkart_model.joblib
-│   ├── requirements.txt   # Python dependencies for the backend
-│   └── Dockerfile        # Dockerfile for building the backend image
-├── frontend               # Frontend application for user interaction
-│   ├── streamlit_app.py   # Main entry point for the Streamlit application
-│   ├── requirements.txt    # Python dependencies for the frontend
-│   └── Dockerfile        # Dockerfile for building the frontend image
-├── data                   # Datasets used for training and testing
-│   ├── train.csv         # Training dataset
-│   ├── test.csv          # Test dataset
-│   └── Batch_Data_SuperKart.csv  # Batch dataset for bulk predictions
-├── notebooks              # Jupyter notebooks for development and documentation
+│   └── tests/
+│       └── test_app.py
+├── frontend/
+│   ├── streamlit_app.py
+│   ├── requirements.txt
+│   └── Dockerfile
+├── data/
+│   ├── train.csv
+│   ├── test.csv
+│   └── Batch_Data_SuperKart.csv
+├── notebooks/
 │   └── Full_Code_SuperKart_Model_Deployment_Notebook.ipynb
-├── .devcontainer          # Configuration for development container
-│   └── devcontainer.json
-├── .github                # GitHub workflows for CI/CD
-│   └── workflows
-│       └── ci.yml
-├── docker-compose.yml     # Docker Compose file for multi-container setup
-├── .gitignore             # Files and directories to ignore in Git
-└── README.md              # Project documentation
+├── docker-compose.yml
+└── README.md
 ```
 
-## Setup Instructions
-1. **Clone the Repository**
-   ```bash
-   git clone <repository-url>
-   cd superkart-forecasting
-   ```
+## Quick Start (Docker Recommended)
+1. Clone and enter the repository:
+  ```bash
+  git clone https://github.com/tagireddy/GreatLearningSuperKart.git
+  cd GreatLearningSuperKart
+  ```
 
-2. **Install Dependencies**
-   - For the backend:
-     ```bash
-     cd backend
-     pip install -r requirements.txt
-     ```
-   - For the frontend:
-     ```bash
-     cd ../frontend
-     pip install -r requirements.txt
-     ```
+2. Train or refresh the model artifact:
+  ```bash
+  docker compose run --rm -v ./data:/data backend python train_model.py
+  ```
 
-3. **Run the Application**
-   - Start the backend server:
-     ```bash
-     cd backend
-     python app.py
-     ```
-   - Start the frontend application:
-     ```bash
-     cd ../frontend
-     streamlit run streamlit_app.py
-     ```
+3. Build and run:
+  ```bash
+  docker compose up -d --build
+  ```
 
-4. **Docker Setup**
-   - Build and run the Docker containers:
-     ```bash
-     docker-compose up --build
-     ```
+4. Open the apps:
+  - Frontend: http://localhost:8501
+  - Backend API base: http://localhost:5001
 
-## Usage
-- Access the frontend application through the provided URL after starting the Streamlit app.
-- Use the interface to input product details and receive sales predictions.
+## Local Run (Without Docker)
+Run backend:
+```bash
+cd backend
+pip install -r requirements.txt
+python train_model.py
+python app.py
+```
 
-## Contributing
-Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.
+Run frontend in another terminal:
+```bash
+cd frontend
+pip install -r requirements.txt
+BACKEND_URL=http://localhost:5001 streamlit run streamlit_app.py --server.port 8501
+```
 
-## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
+## API Endpoints
+- `GET /health` - health status
+- `GET /model-info` - expected model features and model path
+- `POST /v1/predict` - single prediction
+- `POST /v1/predictbatch` - batch prediction via uploaded CSV
+
+## Testing
+Run backend tests:
+```bash
+cd backend
+python -m unittest discover -s tests -v
+```
+
+## Notes
+- Docker maps backend container port `5000` to host port `5001` to avoid local macOS port conflicts.
+- Frontend uses `BACKEND_URL` environment variable; default is `http://backend:5000` for container-to-container networking.

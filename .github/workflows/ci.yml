@@ -12,29 +12,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: superkart
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U user"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.8'
+          python-version: '3.9'
 
       - name: Install backend dependencies
         run: |
@@ -46,24 +31,16 @@ jobs:
           cd frontend
           pip install -r requirements.txt
 
+      - name: Train model artifact
+        run: |
+          cd backend
+          python train_model.py
+
       - name: Run backend tests
         run: |
           cd backend
-          pytest
-
-      - name: Run frontend tests
-        run: |
-          cd frontend
-          pytest
+          python -m unittest discover -s tests -v
 
       - name: Build Docker images
         run: |
-          docker-compose build
-
-      - name: Push Docker images
-        run: |
-          docker-compose push
-
-      - name: Deploy application
-        run: |
-          docker-compose up -d
+          docker compose build
